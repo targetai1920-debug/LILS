@@ -9,7 +9,7 @@ export type CartAction =
   | { type: 'CLEAR_CART' }
   | { type: 'REPLACE_STATE'; state: CartState };
 
-export const emptyCartState: CartState = { lines: [] };
+export const emptyCartState: CartState = { lines: [], hydrated: false };
 
 export const MIN_QUANTITY = 1;
 export const MAX_QUANTITY = 20;
@@ -22,10 +22,11 @@ export function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case 'ADD_LINE': {
       const newLine: CartLine = { ...action.line, lineId: generateId('line') };
-      return { lines: [...state.lines, newLine] };
+      return { ...state, lines: [...state.lines, newLine] };
     }
     case 'UPDATE_LINE': {
       return {
+        ...state,
         lines: state.lines.map((line) =>
           line.lineId === action.lineId ? { ...action.line, lineId: action.lineId } : line,
         ),
@@ -33,6 +34,7 @@ export function cartReducer(state: CartState, action: CartAction): CartState {
     }
     case 'SET_QUANTITY': {
       return {
+        ...state,
         lines: state.lines.map((line) =>
           line.lineId === action.lineId
             ? { ...line, quantity: clampQuantity(action.quantity) }
@@ -41,10 +43,12 @@ export function cartReducer(state: CartState, action: CartAction): CartState {
       };
     }
     case 'REMOVE_LINE': {
-      return { lines: state.lines.filter((line) => line.lineId !== action.lineId) };
+      return { ...state, lines: state.lines.filter((line) => line.lineId !== action.lineId) };
     }
     case 'CLEAR_CART': {
-      return emptyCartState;
+      // Vaciar el carrito no debe "deshidratarlo": ya se cargó desde
+      // localStorage, solo se vacía su contenido.
+      return { ...emptyCartState, hydrated: state.hydrated };
     }
     case 'REPLACE_STATE': {
       return action.state;

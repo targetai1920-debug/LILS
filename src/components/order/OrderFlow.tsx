@@ -1,14 +1,18 @@
 'use client';
 
-import { useReducer, useState } from 'react';
+import { useMemo, useReducer, useRef, useState } from 'react';
 import type { OrderDraft } from '@/types';
 import { useCart } from '@/context/CartContext';
 import {
   checkoutReducer,
   createInitialCheckoutState,
   getStepList,
+  type CheckoutAction,
 } from '@/lib/orders/checkoutReducer';
-import { demoOrderService } from '@/lib/orders/DemoOrderService';
+import { demoOrderService, IdempotencyConflictError } from '@/lib/orders/DemoOrderService';
+import { buildOrderFingerprint } from '@/lib/orders/fingerprint';
+import { resolveAttemptIdentity, type AttemptIdentity } from '@/lib/orders/attemptId';
+import { validateOrderDraftForFinalization } from '@/lib/orders/draftValidation';
 import { getProductById } from '@/data/menu';
 import { calculateCartSubtotalBs } from '@/lib/cart/pricing';
 import { Stepper } from './Stepper';
@@ -25,42 +29,90 @@ export function OrderFlow() {
   const { lines, clearCart } = useCart();
   const [state, dispatch] = useReducer(checkoutReducer, undefined, createInitialCheckoutState);
   const [finalizing, setFinalizing] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  // Identidad del intento de envío (clave de idempotencia + huella del
+  // contenido que representa). Vive en un ref, no en el reducer: solo debe
+  // cambiar en el instante de finalizar, comparando contra el intento
+  // anterior — igual que `idempotencyKeyRef`/`idempotencyPayloadRef` en
+  // Esquece/web-reservas/app/page.tsx.
+  const identityRef = useRef<AttemptIdentity | null>(null);
+  // Guarda sincrónica de doble clic: un `useRef` se lee/escribe de inmediato,
+  // sin esperar a que React vuelva a renderizar, así que dos clics casi
+  // simultáneos (antes de que `finalizing` se refleje en el DOM) no pueden
+  // colar una segunda llamada al servicio. El botón deshabilitado por
+  // `finalizing` es la protección visual; esta es la protección real.
+  const submittingRef = useRef(false);
 
   const steps = getStepList();
   const currentStep = steps[state.stepIndex];
   const subtotalBs = calculateCartSubtotalBs(lines, getProductById);
 
-  const draft: OrderDraft = {
-    attemptId: state.attemptId,
-    lines,
-    fulfillmentType: state.fulfillmentType,
-    address: state.fulfillmentType === 'delivery' ? state.address : null,
-    pickup: state.fulfillmentType === 'pickup' ? state.pickup : null,
-    billing: state.billing,
-    paymentMethod: state.paymentMethod,
-    deliveryFeeBs: state.deliveryFeeBs,
-    distanceKm: state.distanceKm,
-  };
+  const draft: OrderDraft = useMemo(
+    () => ({
+      attemptId: state.orderResult?.orderId ?? '',
+      lines,
+      fulfillmentType: state.fulfillmentType,
+      address: state.fulfillmentType === 'delivery' ? state.address : null,
+      pickup: state.fulfillmentType === 'pickup' ? state.pickup : null,
+      billing: state.billing,
+      paymentMethod: state.paymentMethod,
+      deliveryFeeBs: state.deliveryFeeBs,
+      distanceKm: state.distanceKm,
+    }),
+    [state, lines],
+  );
+
+  /** Despacha una acción y limpia cualquier mensaje de validación pendiente. */
+  function act(action: CheckoutAction) {
+    setValidationError(null);
+    dispatch(action);
+  }
 
   async function handleFinalize() {
-    if (state.finalized) return;
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setFinalizing(true);
+    setValidationError(null);
+
     try {
-      const result = await demoOrderService.submit(draft);
+      const validationIssue = validateOrderDraftForFinalization(draft);
+      if (validationIssue) {
+        setValidationError(validationIssue.message);
+        dispatch({ type: 'GO_TO_STEP', stepIndex: steps.indexOf(validationIssue.stepId) });
+        return;
+      }
+
+      const fingerprint = buildOrderFingerprint(draft);
+      const identity = resolveAttemptIdentity(identityRef.current, fingerprint);
+      identityRef.current = identity;
+
+      const result = await demoOrderService.submit({ ...draft, attemptId: identity.attemptId });
       dispatch({ type: 'FINALIZE', orderResult: result });
       dispatch({ type: 'GO_TO_STEP', stepIndex: steps.indexOf('receipt') });
+    } catch (error) {
+      if (error instanceof IdempotencyConflictError) {
+        setValidationError(
+          'Tu pedido cambió desde el último intento de envío. Revisa el resumen antes de volver a finalizar.',
+        );
+      } else {
+        setValidationError('No pudimos procesar el pedido de demostración. Intenta nuevamente.');
+      }
     } finally {
+      submittingRef.current = false;
       setFinalizing(false);
     }
   }
 
   function handleStartNewOrder() {
     clearCart();
+    identityRef.current = null;
     dispatch({ type: 'RESET_CHECKOUT' });
   }
 
   function handleClearLocalData() {
     clearCart();
+    identityRef.current = null;
     dispatch({ type: 'RESET_CHECKOUT' });
   }
 
@@ -72,44 +124,42 @@ export function OrderFlow() {
       </div>
 
       <div className="mt-6 rounded-brand border-2 border-brand-black/10 bg-brand-white p-5 md:p-6">
-        {currentStep === 'cart' ? (
-          <CartStep onContinue={() => dispatch({ type: 'NEXT_STEP' })} />
-        ) : null}
+        {currentStep === 'cart' ? <CartStep onContinue={() => act({ type: 'NEXT_STEP' })} /> : null}
 
         {currentStep === 'fulfillment' ? (
           <FulfillmentStep
             value={state.fulfillmentType}
-            onChange={(value) => dispatch({ type: 'SET_FULFILLMENT', value })}
-            onBack={() => dispatch({ type: 'PREV_STEP' })}
-            onContinue={() => dispatch({ type: 'NEXT_STEP' })}
+            onChange={(value) => act({ type: 'SET_FULFILLMENT', value })}
+            onBack={() => act({ type: 'PREV_STEP' })}
+            onContinue={() => act({ type: 'NEXT_STEP' })}
           />
         ) : null}
 
         {currentStep === 'details' && state.fulfillmentType === 'delivery' ? (
           <DeliveryDetailsStep
             address={state.address}
-            onPatch={(patch) => dispatch({ type: 'PATCH_ADDRESS', patch })}
-            onFeeCalculated={(feeBs, distanceKm) => dispatch({ type: 'SET_DELIVERY_FEE', feeBs, distanceKm })}
-            onBack={() => dispatch({ type: 'PREV_STEP' })}
-            onContinue={() => dispatch({ type: 'NEXT_STEP' })}
+            onPatch={(patch) => act({ type: 'PATCH_ADDRESS', patch })}
+            onFeeCalculated={(feeBs, distanceKm) => act({ type: 'SET_DELIVERY_FEE', feeBs, distanceKm })}
+            onBack={() => act({ type: 'PREV_STEP' })}
+            onContinue={() => act({ type: 'NEXT_STEP' })}
           />
         ) : null}
 
         {currentStep === 'details' && state.fulfillmentType === 'pickup' ? (
           <PickupDetailsStep
             pickup={state.pickup}
-            onPatch={(patch) => dispatch({ type: 'PATCH_PICKUP', patch })}
-            onBack={() => dispatch({ type: 'PREV_STEP' })}
-            onContinue={() => dispatch({ type: 'NEXT_STEP' })}
+            onPatch={(patch) => act({ type: 'PATCH_PICKUP', patch })}
+            onBack={() => act({ type: 'PREV_STEP' })}
+            onContinue={() => act({ type: 'NEXT_STEP' })}
           />
         ) : null}
 
         {currentStep === 'billing' ? (
           <BillingStep
             billing={state.billing}
-            onChange={(billing) => dispatch({ type: 'SET_BILLING', billing })}
-            onBack={() => dispatch({ type: 'PREV_STEP' })}
-            onContinue={() => dispatch({ type: 'NEXT_STEP' })}
+            onChange={(billing) => act({ type: 'SET_BILLING', billing })}
+            onBack={() => act({ type: 'PREV_STEP' })}
+            onContinue={() => act({ type: 'NEXT_STEP' })}
           />
         ) : null}
 
@@ -117,21 +167,22 @@ export function OrderFlow() {
           <PaymentStep
             fulfillmentType={state.fulfillmentType}
             value={state.paymentMethod}
-            onChange={(value) => dispatch({ type: 'SET_PAYMENT', value })}
+            onChange={(value) => act({ type: 'SET_PAYMENT', value })}
             subtotalBs={subtotalBs}
             deliveryFeeBs={state.deliveryFeeBs}
-            onBack={() => dispatch({ type: 'PREV_STEP' })}
-            onContinue={() => dispatch({ type: 'NEXT_STEP' })}
+            onBack={() => act({ type: 'PREV_STEP' })}
+            onContinue={() => act({ type: 'NEXT_STEP' })}
           />
         ) : null}
 
         {currentStep === 'review' ? (
           <ReviewStep
             draft={draft}
-            onEditStep={(stepIndex) => dispatch({ type: 'GO_TO_STEP', stepIndex })}
-            onBack={() => dispatch({ type: 'PREV_STEP' })}
+            onEditStep={(stepIndex) => act({ type: 'GO_TO_STEP', stepIndex })}
+            onBack={() => act({ type: 'PREV_STEP' })}
             onFinalize={handleFinalize}
             finalizing={finalizing}
+            errorMessage={validationError}
           />
         ) : null}
 

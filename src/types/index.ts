@@ -86,6 +86,8 @@ export interface CartLine {
 
 export interface CartState {
   lines: CartLine[];
+  /** true una vez que el carrito terminó de cargarse desde localStorage. */
+  hydrated: boolean;
 }
 
 /* ---------- Pedido / checkout ---------- */
@@ -136,4 +138,10 @@ export interface OrderResult {
   success: boolean;
   orderId: string;
   submittedAt: string;
+  /**
+   * true cuando esta respuesta es la reutilización idempotente de un
+   * intento anterior (misma clave de intento, mismo pedido), no una
+   * creación nueva.
+   */
+  replayed: boolean;
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useReducer } from 'react';
 import type { ReactNode } from 'react';
 import type { CartLine } from '@/types';
 import { cartReducer, emptyCartState } from '@/lib/cart/reducer';
@@ -20,22 +20,24 @@ const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, emptyCartState);
-  const [hydrated, setHydrated] = useState(false);
 
+  // Un único dispatch: `loadCartFromStorage()` ya devuelve `hydrated: true`,
+  // así que este efecto sincroniza el carrito con localStorage en una sola
+  // actualización de estado, en vez de dos (líneas + bandera) que
+  // producirían un render en cascada.
   useEffect(() => {
     dispatch({ type: 'REPLACE_STATE', state: loadCartFromStorage() });
-    setHydrated(true);
   }, []);
 
   useEffect(() => {
-    if (!hydrated) return;
+    if (!state.hydrated) return;
     saveCartToStorage(state);
-  }, [state, hydrated]);
+  }, [state]);
 
   const value = useMemo<CartContextValue>(
     () => ({
       lines: state.lines,
-      hydrated,
+      hydrated: state.hydrated,
       addLine: (line) => dispatch({ type: 'ADD_LINE', line }),
       updateLine: (lineId, line) => dispatch({ type: 'UPDATE_LINE', lineId, line }),
       setQuantity: (lineId, quantity) => dispatch({ type: 'SET_QUANTITY', lineId, quantity }),
@@ -45,7 +47,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         clearCartStorage();
       },
     }),
-    [state.lines, hydrated],
+    [state],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

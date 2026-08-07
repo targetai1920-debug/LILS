@@ -6,8 +6,7 @@ import type {
   PaymentMethod,
   PickupDetails,
 } from '@/types';
-import { branches } from '@/data/branches';
-import { generateOrderAttemptId } from './attemptId';
+import { defaultBranch } from '@/data/branches';
 
 export type StepId =
   | 'cart'
@@ -41,40 +40,57 @@ export interface CheckoutState {
   paymentMethod: PaymentMethod | null;
   deliveryFeeBs: number;
   distanceKm: number | null;
-  attemptId: string;
   finalized: boolean;
   orderResult: OrderResult | null;
+}
+
+/**
+ * Estados vacíos centralizados: se reutilizan tanto al crear el estado
+ * inicial del checkout como al limpiar los datos exclusivos de un tipo de
+ * entrega cuando el usuario cambia de delivery a recojo (o viceversa), para
+ * no duplicar estos literales en cada sitio que necesita "vaciar" una parte
+ * del formulario.
+ */
+export function createInitialAddress(): DeliveryAddress {
+  return {
+    mainStreet: '',
+    houseNumber: '',
+    noHouseNumber: false,
+    reference: '',
+    crossStreet: '',
+    location: null,
+    phone: '',
+    phoneNormalized: '',
+  };
+}
+
+export function createInitialPickup(): PickupDetails {
+  return {
+    branchId: defaultBranch.id,
+    personName: '',
+    date: '',
+    time: '',
+  };
+}
+
+export function createInitialBilling(): BillingDetails {
+  return {
+    type: 'sin-nit',
+    nit: '',
+    businessName: '',
+  };
 }
 
 export function createInitialCheckoutState(): CheckoutState {
   return {
     stepIndex: 0,
     fulfillmentType: null,
-    address: {
-      mainStreet: '',
-      houseNumber: '',
-      noHouseNumber: false,
-      reference: '',
-      crossStreet: '',
-      location: null,
-      phone: '',
-      phoneNormalized: '',
-    },
-    pickup: {
-      branchId: branches[0]?.id ?? '',
-      personName: '',
-      date: '',
-      time: '',
-    },
-    billing: {
-      type: 'sin-nit',
-      nit: '',
-      businessName: '',
-    },
+    address: createInitialAddress(),
+    pickup: createInitialPickup(),
+    billing: createInitialBilling(),
     paymentMethod: null,
     deliveryFeeBs: 0,
     distanceKm: null,
-    attemptId: generateOrderAttemptId(),
     finalized: false,
     orderResult: null,
   };
@@ -93,6 +109,46 @@ export type CheckoutAction =
   | { type: 'FINALIZE'; orderResult: OrderResult }
   | { type: 'RESET_CHECKOUT' };
 
+/**
+ * Cambiar el tipo de entrega (delivery <-> recojo) reinicia:
+ * - el método de pago (las opciones válidas dependen del tipo);
+ * - cualquier estado de finalización previo (nunca se llega al comprobante
+ *   con datos de un tipo distinto al que se finalizó);
+ * - los datos exclusivos del OTRO tipo, que quedarían incompatibles.
+ *
+ * El carrito y la facturación (con/sin NIT) se conservan siempre: no son
+ * exclusivos de un tipo de entrega. Volver a elegir el mismo tipo que ya
+ * estaba seleccionado es un no-op explícito para no borrar nada.
+ */
+function applyFulfillmentChange(state: CheckoutState, value: FulfillmentType): CheckoutState {
+  if (state.fulfillmentType === value) {
+    return state;
+  }
+
+  const base: CheckoutState = {
+    ...state,
+    fulfillmentType: value,
+    paymentMethod: null,
+    finalized: false,
+    orderResult: null,
+  };
+
+  if (value === 'pickup') {
+    return {
+      ...base,
+      address: createInitialAddress(),
+      deliveryFeeBs: 0,
+      distanceKm: null,
+    };
+  }
+
+  // value === 'delivery'
+  return {
+    ...base,
+    pickup: createInitialPickup(),
+  };
+}
+
 export function checkoutReducer(state: CheckoutState, action: CheckoutAction): CheckoutState {
   switch (action.type) {
     case 'GO_TO_STEP':
@@ -102,7 +158,7 @@ export function checkoutReducer(state: CheckoutState, action: CheckoutAction): C
     case 'PREV_STEP':
       return { ...state, stepIndex: Math.max(state.stepIndex - 1, 0) };
     case 'SET_FULFILLMENT':
-      return { ...state, fulfillmentType: action.value };
+      return applyFulfillmentChange(state, action.value);
     case 'PATCH_ADDRESS':
       return { ...state, address: { ...state.address, ...action.patch } };
     case 'PATCH_PICKUP':

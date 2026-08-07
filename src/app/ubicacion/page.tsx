@@ -19,7 +19,13 @@ export default function UbicacionPage() {
 
       <div className="mt-8 flex flex-col gap-8">
         {branches.map((branch) => {
-          const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${branch.coordinates.lat},${branch.coordinates.lng}`;
+          // Mientras la coordenada sea aproximada, "Cómo llegar" busca la
+          // dirección pública en vez de apuntar a un pin que afirmaría una
+          // precisión que todavía no tenemos confirmada por LILS.
+          const directionsUrl = branch.coordinatesApproximate
+            ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(branch.addressLine)}`
+            : `https://www.google.com/maps/dir/?api=1&destination=${branch.coordinates.lat},${branch.coordinates.lng}`;
+
           return (
             <article
               key={branch.id}
@@ -28,6 +34,12 @@ export default function UbicacionPage() {
               <div className="h-72 w-full">
                 <BranchMapLoader branch={branch} />
               </div>
+              {branch.coordinatesApproximate ? (
+                <p className="bg-brand-beige px-4 py-2 text-center text-xs text-brand-black/70">
+                  Mapa referencial de la demostración. La ubicación exacta se confirmará con LILS
+                  antes de habilitar pedidos.
+                </p>
+              ) : null}
               <div className="p-6">
                 <h2 className="font-display text-xl font-extrabold text-brand-black">{branch.name}</h2>
                 <dl className="mt-3 space-y-2 text-sm text-brand-black/80">
@@ -46,13 +58,6 @@ export default function UbicacionPage() {
                     </dd>
                   </div>
                 </dl>
-
-                {branch.coordinatesApproximate ? (
-                  <p className="mt-3 rounded-lg bg-brand-beige px-3 py-2 text-xs text-brand-black/70">
-                    Coordenada aproximada de demostración (DEMO_APPROXIMATE_COORDINATES_REPLACE), no
-                    es la ubicación oficial exacta. Pendiente de confirmación por LILS.
-                  </p>
-                ) : null}
 
                 <a
                   href={directionsUrl}

@@ -18,7 +18,7 @@ export default function NosotrosPage() {
           {/* TODO_CLIENT_APPROVAL: reemplazar por la historia oficial cuando LILS la confirme. */}
           <p className="text-lg leading-relaxed text-brand-black/85">{aboutUsText}</p>
           <p className="mt-4 text-xs uppercase tracking-wide text-brand-black/40">
-            Contenido provisional (TODO_CLIENT_APPROVAL) — pendiente de historia oficial del cliente.
+            Texto provisional, pendiente de confirmación por LILS.
           </p>
         </div>
       </div>

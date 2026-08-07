@@ -1,0 +1,52 @@
+name: CI
+
+# Validación únicamente. Este workflow nunca debe construir un paso de
+# despliegue (deploy-pages, permisos pages:write/id-token:write, ni un
+# entorno github-pages): solo comprueba que el código está sano. Publicar
+# la demo requiere un workflow separado y una autorización explícita
+# posterior — ver docs/DEMO_LIMITATIONS.md.
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Lint, typecheck, test, audit y build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalación reproducible
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Tests
+        run: npm test
+
+      - name: Auditoría de dependencias
+        run: npm audit
+
+      - name: Build local normal (sirve en /)
+        run: npm run build
+
+      - name: Build estático configurado para /LILS
+        run: npm run build:pages
+
+      - name: Verificar rutas y assets del build /LILS
+        run: npm run verify:pages

@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import type { OrderDraft } from '@/types';
 import { getProductById } from '@/data/menu';
 import { getBranchById } from '@/data/branches';
@@ -11,26 +10,17 @@ interface ReviewStepProps {
   draft: OrderDraft;
   onEditStep: (stepIndex: number) => void;
   onBack: () => void;
-  onFinalize: () => Promise<void>;
+  onFinalize: () => void;
   finalizing: boolean;
+  errorMessage: string | null;
 }
 
-export function ReviewStep({ draft, onEditStep, onBack, onFinalize, finalizing }: ReviewStepProps) {
-  const [error, setError] = useState<string | null>(null);
+export function ReviewStep({ draft, onEditStep, onBack, onFinalize, finalizing, errorMessage }: ReviewStepProps) {
   const branch = draft.pickup ? getBranchById(draft.pickup.branchId) : undefined;
   const summary = buildOrderSummary(draft, getProductById, branch);
 
   if (!summary) {
     return <p className="text-sm text-brand-black/60">Completa los pasos anteriores para ver el resumen.</p>;
-  }
-
-  async function handleFinalize() {
-    setError(null);
-    try {
-      await onFinalize();
-    } catch {
-      setError('No pudimos procesar el pedido de demostración. Intenta nuevamente.');
-    }
   }
 
   return (
@@ -157,9 +147,9 @@ export function ReviewStep({ draft, onEditStep, onBack, onFinalize, finalizing }
         </dl>
       </section>
 
-      {error ? (
+      {errorMessage ? (
         <p role="alert" className="mt-4 text-sm font-semibold text-red-700">
-          {error}
+          {errorMessage}
         </p>
       ) : null}
 
@@ -180,7 +170,7 @@ export function ReviewStep({ draft, onEditStep, onBack, onFinalize, finalizing }
         </button>
         <button
           type="button"
-          onClick={handleFinalize}
+          onClick={onFinalize}
           disabled={finalizing}
           className="flex-1 rounded-full bg-brand-blue py-2.5 text-center font-display font-bold text-brand-white disabled:opacity-50"
         >
