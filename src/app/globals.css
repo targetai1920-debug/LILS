@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-blue: #2537a0;
+  --brand-blue-dark: #172577;
+  --brand-cream: #f5f1ee;
+  --brand-beige: #e4dccf;
+  --brand-black: #0c1013;
+  --brand-white: #ffffff;
+
+  --font-display: 'Baloo 2', 'Arial Rounded MT Bold', 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  background-color: var(--brand-cream);
+  color: var(--brand-black);
+  font-family: var(--font-body);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.checker-pattern {
+  background-image: conic-gradient(
+    var(--brand-blue) 90deg,
+    transparent 90deg 180deg,
+    var(--brand-blue) 180deg 270deg,
+    transparent 270deg
+  );
+  background-size: 24px 24px;
+}
+
+.checker-pattern-light {
+  background-image: conic-gradient(
+    var(--brand-beige) 90deg,
+    transparent 90deg 180deg,
+    var(--brand-beige) 180deg 270deg,
+    transparent 270deg
+  );
+  background-size: 20px 20px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--brand-blue);
+  color: var(--brand-white);
+  padding: 0.75rem 1.25rem;
+  border-radius: 0 0 0.75rem 0;
+}
+
+.skip-link:focus {
+  left: 0;
+}
+
+.leaflet-container {
+  font-family: var(--font-body);
+}
