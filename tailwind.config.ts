@@ -17,7 +17,7 @@ const config: Config = {
         body: ['var(--font-body)'],
       },
       borderRadius: {
-        brand: '1.25rem',
+        brand: '2rem',
       },
       keyframes: {
         'pop-in': {
@@ -28,10 +28,15 @@ const config: Config = {
           '0%': { transform: 'translateY(12px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
+        float: {
+          '0%, 100%': { transform: 'translateY(0) rotate(-1deg)' },
+          '50%': { transform: 'translateY(-12px) rotate(1deg)' },
+        },
       },
       animation: {
-        'pop-in': 'pop-in 180ms ease-out',
-        'slide-up': 'slide-up 220ms ease-out',
+        'pop-in': 'pop-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1)',
+        'slide-up': 'slide-up 480ms cubic-bezier(0.2, 0.8, 0.2, 1)',
+        float: 'float 4.8s ease-in-out infinite',
       },
     },
   },

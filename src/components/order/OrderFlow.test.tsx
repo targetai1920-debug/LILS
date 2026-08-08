@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CartProvider } from '@/context/CartContext';
@@ -28,8 +28,8 @@ function seedCart() {
 
 async function driveToReview(user: ReturnType<typeof userEvent.setup>) {
   // Paso 1: carrito
-  await screen.findByText(/LILS Burger/, {}, { timeout: 3000 });
-  await user.click(screen.getByRole('button', { name: 'Continuar' }));
+  await screen.findAllByText(/LILS Burger/, {}, { timeout: 3000 });
+  await user.click(screen.getByRole('button', { name: /Elegir entrega/ }));
 
   // Paso 2: recojo en sucursal (evita el mapa interactivo, no relevante aquí)
   await user.click(screen.getByText('Recoger en sucursal'));
@@ -37,11 +37,12 @@ async function driveToReview(user: ReturnType<typeof userEvent.setup>) {
 
   // Paso 3: datos de recojo
   await user.type(screen.getByLabelText(/Nombre de quien recogerá/), 'Ana Test');
-  fireEvent.change(screen.getByLabelText(/Fecha de recojo/), { target: { value: '2099-01-01' } });
+  const timeSelect = screen.getByLabelText(/qué hora pasas hoy/i) as HTMLSelectElement;
   await waitFor(() => {
-    expect((screen.getByLabelText(/Hora de recojo/) as HTMLSelectElement).options.length).toBeGreaterThan(1);
+    expect(timeSelect.options.length).toBeGreaterThan(1);
   });
-  await user.selectOptions(screen.getByLabelText(/Hora de recojo/), '17:00');
+  const firstAvailableTime = timeSelect.options[1]!.value;
+  await user.selectOptions(timeSelect, firstAvailableTime);
   await user.click(screen.getByRole('button', { name: 'Continuar' }));
 
   // Paso 4: facturación (sin NIT por defecto)
@@ -58,13 +59,19 @@ async function driveToReview(user: ReturnType<typeof userEvent.setup>) {
 
 describe('OrderFlow: protección de doble clic en Finalizar pedido', () => {
   beforeEach(() => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    vi.setSystemTime(new Date('2026-08-07T20:00:00.000Z'));
     window.localStorage.clear();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('11. dos finalizaciones simultáneas producen una sola creación lógica', async () => {
     seedCart();
     const submitSpy = vi.spyOn(demoOrderService, 'submit');
-    const user = userEvent.setup();
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
 
     render(
       <CartProvider>

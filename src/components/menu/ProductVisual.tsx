@@ -6,13 +6,14 @@ interface ProductVisualProps {
   product: Product;
   className?: string;
   sizes?: string;
+  priority?: boolean;
 }
 
 /**
  * Muestra una fotografía limpia cuando existe y conserva el placeholder de
  * marca para los productos que todavía no tienen una foto individual.
  */
-export function ProductVisual({ product, className, sizes = '100vw' }: ProductVisualProps) {
+export function ProductVisual({ product, className, sizes = '100vw', priority = false }: ProductVisualProps) {
   if (!product.imagePath) {
     return <BurgerPlaceholder className={className} label={product.name} />;
   }
@@ -27,7 +28,7 @@ export function ProductVisual({ product, className, sizes = '100vw' }: ProductVi
         fill
         sizes={sizes}
         className="object-cover"
-        priority={false}
+        priority={priority}
       />
     </div>
   );

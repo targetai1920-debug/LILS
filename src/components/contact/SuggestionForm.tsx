@@ -36,7 +36,7 @@ export function SuggestionForm() {
       <div
         role="status"
         aria-live="polite"
-        className="rounded-brand border-2 border-brand-blue bg-brand-white p-6 text-center"
+        className="lils-card p-6 text-center"
       >
         <p className="font-display text-xl font-extrabold text-brand-blue">¡Gracias por tu sugerencia!</p>
         <p className="mt-2 text-sm text-brand-black/70">
@@ -46,7 +46,7 @@ export function SuggestionForm() {
         <button
           type="button"
           onClick={handleNewSuggestion}
-          className="mt-4 rounded-full bg-brand-blue px-5 py-2.5 text-sm font-bold text-brand-white"
+          className="lils-button-primary mt-4 text-sm"
         >
           Enviar otra sugerencia
         </button>
@@ -109,7 +109,7 @@ export function SuggestionForm() {
       <button
         type="submit"
         disabled={status === 'sending'}
-        className="rounded-full bg-brand-blue py-3 text-center font-display font-bold text-brand-white disabled:opacity-60"
+        className="lils-button-primary w-full py-3"
       >
         {status === 'sending' ? 'Enviando…' : 'Enviar sugerencia'}
       </button>

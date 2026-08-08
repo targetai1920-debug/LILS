@@ -5,8 +5,9 @@
 :root {
   --brand-blue: #2537a0;
   --brand-blue-dark: #172577;
-  --brand-cream: #f5f1ee;
-  --brand-beige: #e4dccf;
+  --brand-blue-soft: #dfe5ff;
+  --brand-cream: #f7f2e9;
+  --brand-beige: #e7dccb;
   --brand-black: #0c1013;
   --brand-white: #ffffff;
 
@@ -20,6 +21,7 @@
 
 html {
   scroll-behavior: smooth;
+  background: var(--brand-cream);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -37,9 +39,33 @@ html {
 }
 
 body {
-  background-color: var(--brand-cream);
+  min-width: 320px;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 8% 8%, rgb(37 55 160 / 12%) 0 9rem, transparent 9.2rem),
+    radial-gradient(circle at 92% 28%, rgb(228 220 207 / 75%) 0 13rem, transparent 13.2rem),
+    radial-gradient(circle at 15% 78%, rgb(37 55 160 / 8%) 0 16rem, transparent 16.2rem),
+    var(--brand-cream);
   color: var(--brand-black);
   font-family: var(--font-body);
+  text-rendering: optimizeLegibility;
+}
+
+body::before {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  content: '';
+  pointer-events: none;
+  opacity: 0.28;
+  background-image: radial-gradient(rgb(37 55 160 / 28%) 0.8px, transparent 0.8px);
+  background-size: 18px 18px;
+  mask-image: linear-gradient(to bottom, black, transparent 84%);
+}
+
+::selection {
+  color: var(--brand-white);
+  background: var(--brand-blue);
 }
 
 .font-display {
@@ -53,7 +79,7 @@ body {
     var(--brand-blue) 180deg 270deg,
     transparent 270deg
   );
-  background-size: 24px 24px;
+  background-size: 28px 28px;
 }
 
 .checker-pattern-light {
@@ -74,7 +100,7 @@ body {
   background: var(--brand-blue);
   color: var(--brand-white);
   padding: 0.75rem 1.25rem;
-  border-radius: 0 0 0.75rem 0;
+  border-radius: 0 0 1.25rem 0;
 }
 
 .skip-link:focus {
@@ -83,4 +109,222 @@ body {
 
 .leaflet-container {
   font-family: var(--font-body);
+}
+
+/* Superficies y controles compartidos: todo el lenguaje de LILS es suave,
+   redondeado y táctil, sin paneles rectangulares rígidos. */
+.lils-surface {
+  border: 1px solid rgb(12 16 19 / 9%);
+  border-radius: 2rem;
+  background: rgb(255 255 255 / 88%);
+  box-shadow: 0 20px 55px rgb(23 37 119 / 10%);
+  backdrop-filter: blur(14px);
+}
+
+.lils-card {
+  border: 1px solid rgb(37 55 160 / 12%);
+  border-radius: 1.75rem;
+  background: rgb(255 255 255 / 92%);
+  box-shadow: 0 14px 38px rgb(23 37 119 / 9%);
+}
+
+.lils-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid rgb(37 55 160 / 20%);
+  border-radius: 999px;
+  color: var(--brand-blue);
+  background: rgb(255 255 255 / 72%);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lils-button-primary,
+.lils-button-secondary,
+.lils-button-danger,
+.lils-button-quiet {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  padding: 0.7rem 1.2rem;
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1;
+  transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease,
+    color 180ms ease, border-color 180ms ease;
+}
+
+.lils-button-primary {
+  color: var(--brand-white);
+  border: 2px solid var(--brand-blue);
+  background: var(--brand-blue);
+  box-shadow: 0 8px 0 var(--brand-blue-dark), 0 15px 28px rgb(23 37 119 / 18%);
+}
+
+.lils-button-secondary {
+  color: var(--brand-blue);
+  border: 2px solid rgb(37 55 160 / 32%);
+  background: var(--brand-white);
+  box-shadow: 0 6px 0 rgb(37 55 160 / 15%);
+}
+
+.lils-button-danger {
+  color: #a71d2a;
+  border: 2px solid rgb(167 29 42 / 22%);
+  background: #fff1f2;
+  box-shadow: 0 6px 0 rgb(167 29 42 / 12%);
+}
+
+.lils-button-quiet {
+  min-height: 2.25rem;
+  padding: 0.45rem 0.8rem;
+  color: var(--brand-blue);
+  border: 1px solid rgb(37 55 160 / 18%);
+  background: rgb(223 229 255 / 58%);
+  font-size: 0.78rem;
+}
+
+.lils-button-primary:hover,
+.lils-button-secondary:hover,
+.lils-button-danger:hover,
+.lils-button-quiet:hover {
+  transform: translateY(-2px) rotate(-0.5deg);
+}
+
+.lils-button-primary:active,
+.lils-button-secondary:active,
+.lils-button-danger:active,
+.lils-button-quiet:active {
+  transform: translateY(2px) scale(0.99);
+  box-shadow: none;
+}
+
+.lils-button-primary:focus-visible,
+.lils-button-secondary:focus-visible,
+.lils-button-danger:focus-visible,
+.lils-button-quiet:focus-visible,
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgb(37 55 160 / 28%);
+  outline-offset: 3px;
+}
+
+.lils-button-primary:disabled,
+.lils-button-secondary:disabled,
+.lils-button-danger:disabled,
+.lils-button-quiet:disabled {
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  opacity: 0.45;
+}
+
+input:not([type='checkbox']):not([type='radio']),
+textarea,
+select {
+  border-radius: 1.2rem !important;
+  background: rgb(255 255 255 / 86%);
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+input:not([type='checkbox']):not([type='radio']):focus,
+textarea:focus,
+select:focus {
+  border-color: rgb(37 55 160 / 48%) !important;
+  background: var(--brand-white);
+  box-shadow: 0 0 0 5px rgb(37 55 160 / 8%);
+}
+
+.blueprint-pattern {
+  background-color: var(--brand-blue);
+  background-image:
+    radial-gradient(circle at 18% 22%, rgb(255 255 255 / 14%) 0 5rem, transparent 5.1rem),
+    radial-gradient(circle at 86% 80%, rgb(255 255 255 / 10%) 0 8rem, transparent 8.1rem),
+    linear-gradient(45deg, transparent 47%, rgb(255 255 255 / 5%) 48% 52%, transparent 53%);
+  background-size: auto, auto, 28px 28px;
+}
+
+.soft-squiggle {
+  background-image:
+    radial-gradient(ellipse at center, transparent 57%, rgb(37 55 160 / 7%) 58% 62%, transparent 63%);
+  background-size: 70px 36px;
+}
+
+.marquee-track {
+  width: max-content;
+  animation: lils-marquee 24s linear infinite;
+}
+
+.animate-soft-rise {
+  animation: lils-soft-rise 620ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.animate-float {
+  animation: lils-float 4.8s ease-in-out infinite;
+}
+
+.animate-wiggle {
+  transform-origin: 70% 75%;
+  animation: lils-wiggle 4.2s ease-in-out infinite;
+}
+
+.hover-bop {
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 220ms ease;
+}
+
+.hover-bop:hover {
+  transform: translateY(-7px) rotate(-0.6deg);
+  box-shadow: 0 22px 48px rgb(23 37 119 / 16%);
+}
+
+@keyframes lils-soft-rise {
+  0% { opacity: 0; transform: translateY(20px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes lils-float {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-12px) rotate(1deg); }
+}
+
+@keyframes lils-wiggle {
+  0%, 84%, 100% { transform: rotate(0); }
+  88% { transform: rotate(-5deg); }
+  92% { transform: rotate(5deg); }
+  96% { transform: rotate(-2deg); }
+}
+
+@keyframes lils-marquee {
+  to { transform: translateX(-50%); }
+}
+
+@media (max-width: 767px) {
+  .lils-surface { border-radius: 1.5rem; }
+  .lils-card { border-radius: 1.4rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .animate-soft-rise,
+  .animate-float,
+  .animate-wiggle {
+    animation: none !important;
+  }
+  .hover-bop:hover,
+  .lils-button-primary:hover,
+  .lils-button-secondary:hover,
+  .lils-button-danger:hover,
+  .lils-button-quiet:hover {
+    transform: none;
+  }
 }

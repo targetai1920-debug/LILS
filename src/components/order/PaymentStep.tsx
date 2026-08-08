@@ -59,8 +59,8 @@ export function PaymentStep({
           {options.map((option) => (
             <label
               key={option.id}
-              className={`cursor-pointer rounded-2xl border-2 p-4 ${
-                value === option.id ? 'border-brand-blue bg-brand-beige' : 'border-brand-black/15'
+              className={`hover-bop cursor-pointer rounded-[1.5rem] border-2 p-5 ${
+                value === option.id ? 'border-brand-blue bg-brand-blue/5 shadow-md' : 'border-brand-black/10 bg-brand-white'
               }`}
             >
               <input
@@ -82,7 +82,7 @@ export function PaymentStep({
         <button
           type="button"
           onClick={onBack}
-          className="rounded-full border-2 border-brand-blue px-5 py-2.5 text-sm font-bold text-brand-blue"
+          className="lils-button-secondary text-sm"
         >
           Volver
         </button>
@@ -90,7 +90,7 @@ export function PaymentStep({
           type="button"
           onClick={onContinue}
           disabled={!value}
-          className="flex-1 rounded-full bg-brand-blue py-2.5 text-center font-display font-bold text-brand-white disabled:opacity-40"
+          className="lils-button-primary flex-1 py-3 text-sm"
         >
           Continuar
         </button>

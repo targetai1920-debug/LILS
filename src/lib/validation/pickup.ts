@@ -1,6 +1,7 @@
 import type { Branch, PickupDetails } from '@/types';
 import type { DeliveryConfig } from '@/types';
 import { validatePickupDateTime } from '@/lib/time/pickupSlots';
+import { getCochabambaNow } from '@/lib/time/cochabamba';
 import type { FieldErrors } from './address';
 
 export interface PickupValidationResult {
@@ -20,7 +21,7 @@ export function validatePickupDetails(
     errors.personName = 'Ingresa el nombre de quien recogerá el pedido.';
   }
 
-  const timeResult = validatePickupDateTime(pickup.date, pickup.time, {
+  const timeResult = validatePickupDateTime(getCochabambaNow(now).dateStr, pickup.time, {
     openTime: branch.openTime,
     closeTime: branch.closeTime,
     intervalMinutes: config.pickupSlotIntervalMinutes,

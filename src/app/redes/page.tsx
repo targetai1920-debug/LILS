@@ -8,16 +8,19 @@ export const metadata: Metadata = {
 
 export default function RedesPage() {
   return (
-    <div className="mx-auto max-w-2xl px-4 py-10">
-      <h1 className="font-display text-3xl font-extrabold text-brand-black md:text-4xl">Redes sociales</h1>
-      <p className="mt-2 text-brand-black/70">Síguenos para ver el menú, novedades y promociones vigentes.</p>
+    <div className="mx-auto max-w-3xl px-4 py-8 md:py-12">
+      <header className="soft-squiggle rounded-[2.5rem] bg-brand-blue px-6 py-9 text-brand-white shadow-[0_22px_55px_rgba(23,37,119,0.20)] md:px-10">
+        <span className="lils-kicker border-brand-white/20 bg-brand-white/10 text-brand-white">Síguenos</span>
+        <h1 className="font-display mt-3 text-5xl font-black tracking-[-0.04em] md:text-6xl">El feed da hambre.</h1>
+        <p className="mt-2 text-brand-white/70">Menú, novedades y promociones vigentes.</p>
+      </header>
 
       <div className="mt-8 flex flex-col gap-4 sm:flex-row">
         <a
           href={business.instagramUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex flex-1 items-center gap-3 rounded-brand border-2 border-brand-blue bg-brand-white p-5 transition-transform hover:scale-[1.02]"
+          className="lils-card hover-bop flex flex-1 items-center gap-3 p-5"
         >
           <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-blue text-brand-white">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -36,7 +39,7 @@ export default function RedesPage() {
           href={business.tiktokUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex flex-1 items-center gap-3 rounded-brand border-2 border-brand-blue bg-brand-white p-5 transition-transform hover:scale-[1.02]"
+          className="lils-card hover-bop flex flex-1 items-center gap-3 p-5"
         >
           <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-blue text-brand-white">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">

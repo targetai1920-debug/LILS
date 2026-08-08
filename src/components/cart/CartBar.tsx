@@ -16,10 +16,10 @@ export function CartBar() {
   const subtotal = calculateCartSubtotalBs(lines, getProductById);
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-30 border-t-4 border-brand-blue bg-brand-white p-3 shadow-[0_-4px_16px_rgba(0,0,0,0.15)] md:hidden">
+    <div className="fixed inset-x-0 bottom-0 z-30 p-3 md:hidden">
       <Link
         href="/ordenar"
-        className="flex items-center justify-between rounded-2xl bg-brand-blue px-4 py-3 text-brand-white"
+        className="flex items-center justify-between rounded-full border border-brand-white/25 bg-brand-blue px-4 py-3 text-brand-white shadow-[0_10px_35px_rgba(23,37,119,0.32)] backdrop-blur"
       >
         <span className="flex items-center gap-2 font-semibold">
           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-white text-sm font-bold text-brand-blue">

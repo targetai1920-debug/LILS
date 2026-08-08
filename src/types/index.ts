@@ -110,6 +110,7 @@ export interface DeliveryAddress {
 export interface PickupDetails {
   branchId: string;
   personName: string;
+  /** Fecha interna del mismo día; la interfaz de recojo solo pide la hora. */
   date: string; // YYYY-MM-DD
   time: string; // HH:mm
 }

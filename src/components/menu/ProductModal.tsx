@@ -91,7 +91,7 @@ export function ProductModal({ product, onClose, initialLine, onSaved }: Product
           type="button"
           onClick={onClose}
           aria-label="Cerrar"
-          className="rounded-full border-2 border-brand-black/20 p-1.5 text-brand-black/70"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-brand-blue/15 bg-brand-blue/5 text-brand-blue transition hover:rotate-6 hover:bg-brand-blue hover:text-brand-white"
         >
           <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
             <path d="M2 2l14 14M16 2L2 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -101,7 +101,7 @@ export function ProductModal({ product, onClose, initialLine, onSaved }: Product
 
       <ProductVisual
         product={product}
-        className="mt-3 aspect-[16/9] w-full rounded-2xl"
+        className="mt-3 aspect-[16/9] w-full rounded-[1.75rem]"
         sizes="(min-width: 640px) 36rem, 100vw"
       />
 
@@ -260,9 +260,9 @@ export function ProductModal({ product, onClose, initialLine, onSaved }: Product
       <button
         type="button"
         onClick={handleSubmit}
-        className="mt-5 w-full rounded-full bg-brand-blue py-3 text-center font-display text-base font-bold text-brand-white"
+        className="lils-button-primary mt-5 w-full py-3.5 text-base"
       >
-        {initialLine ? 'Guardar cambios' : 'Agregar al pedido'}
+        {initialLine ? 'Guardar cambios' : 'Agregar y continuar'}
       </button>
     </Modal>
   );

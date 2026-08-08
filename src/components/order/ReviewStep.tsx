@@ -27,11 +27,11 @@ export function ReviewStep({ draft, onEditStep, onBack, onFinalize, finalizing, 
     <div>
       <h2 className="font-display text-lg font-bold text-brand-black">Revisión final</h2>
 
-      <section className="mt-4 rounded-2xl border-2 border-brand-black/10 p-4">
+      <section className="lils-card mt-4 p-4">
         <div className="flex items-center justify-between">
           <h3 className="font-display font-bold text-brand-black">Productos</h3>
-          <button type="button" onClick={() => onEditStep(0)} className="text-xs font-bold text-brand-blue underline">
-            Editar
+          <button type="button" onClick={() => onEditStep(0)} className="lils-button-quiet">
+            <span aria-hidden="true">✎</span> Editar
           </button>
         </div>
         <ul className="mt-2 flex flex-col gap-2 text-sm">
@@ -59,13 +59,13 @@ export function ReviewStep({ draft, onEditStep, onBack, onFinalize, finalizing, 
         </p>
       </section>
 
-      <section className="mt-4 rounded-2xl border-2 border-brand-black/10 p-4">
+      <section className="lils-card mt-4 p-4">
         <div className="flex items-center justify-between">
           <h3 className="font-display font-bold text-brand-black">
             {summary.fulfillmentType === 'delivery' ? 'Envío a domicilio' : 'Recojo en sucursal'}
           </h3>
-          <button type="button" onClick={() => onEditStep(1)} className="text-xs font-bold text-brand-blue underline">
-            Editar
+          <button type="button" onClick={() => onEditStep(1)} className="lils-button-quiet">
+            <span aria-hidden="true">✎</span> Editar
           </button>
         </div>
         <div className="mt-2 text-sm text-brand-black/80">
@@ -74,7 +74,7 @@ export function ReviewStep({ draft, onEditStep, onBack, onFinalize, finalizing, 
               <p>
                 {draft.address.mainStreet} {draft.address.noHouseNumber ? '(sin número)' : draft.address.houseNumber}
               </p>
-              <p>Entre calle: {draft.address.crossStreet}</p>
+              {draft.address.crossStreet ? <p>Calle auxiliar: {draft.address.crossStreet}</p> : null}
               {draft.address.reference ? <p>Referencia: {draft.address.reference}</p> : null}
               <p>Teléfono: {draft.address.phoneNormalized || draft.address.phone}</p>
               {draft.address.location ? (
@@ -88,36 +88,34 @@ export function ReviewStep({ draft, onEditStep, onBack, onFinalize, finalizing, 
             <>
               <p>{branch?.name}</p>
               <p>Recoge: {draft.pickup.personName}</p>
-              <p>
-                Fecha y hora: {draft.pickup.date} {draft.pickup.time}
-              </p>
+              <p>Hora de recojo: {draft.pickup.time}</p>
             </>
           ) : null}
           <button
             type="button"
             onClick={() => onEditStep(2)}
-            className="mt-1 text-xs font-bold text-brand-blue underline"
+            className="lils-button-quiet mt-3"
           >
-            Editar datos
+            <span aria-hidden="true">✎</span> Editar datos
           </button>
         </div>
       </section>
 
-      <section className="mt-4 rounded-2xl border-2 border-brand-black/10 p-4">
+      <section className="lils-card mt-4 p-4">
         <div className="flex items-center justify-between">
           <h3 className="font-display font-bold text-brand-black">Facturación</h3>
-          <button type="button" onClick={() => onEditStep(3)} className="text-xs font-bold text-brand-blue underline">
-            Editar
+          <button type="button" onClick={() => onEditStep(3)} className="lils-button-quiet">
+            <span aria-hidden="true">✎</span> Editar
           </button>
         </div>
         <p className="mt-2 text-sm text-brand-black/80">{summary.billingLabel}</p>
       </section>
 
-      <section className="mt-4 rounded-2xl border-2 border-brand-black/10 p-4">
+      <section className="lils-card mt-4 p-4">
         <div className="flex items-center justify-between">
           <h3 className="font-display font-bold text-brand-black">Pago</h3>
-          <button type="button" onClick={() => onEditStep(4)} className="text-xs font-bold text-brand-blue underline">
-            Editar
+          <button type="button" onClick={() => onEditStep(4)} className="lils-button-quiet">
+            <span aria-hidden="true">✎</span> Editar
           </button>
         </div>
         <p className="mt-2 text-sm text-brand-black/80">{summary.paymentLabel}</p>
@@ -157,14 +155,14 @@ export function ReviewStep({ draft, onEditStep, onBack, onFinalize, finalizing, 
         <button
           type="button"
           onClick={onBack}
-          className="rounded-full border-2 border-brand-blue px-5 py-2.5 text-sm font-bold text-brand-blue"
+          className="lils-button-secondary text-sm"
         >
           Volver
         </button>
         <button
           type="button"
           onClick={() => onEditStep(0)}
-          className="rounded-full border-2 border-brand-blue px-5 py-2.5 text-sm font-bold text-brand-blue"
+          className="lils-button-secondary text-sm"
         >
           Agregar más productos
         </button>
@@ -172,7 +170,7 @@ export function ReviewStep({ draft, onEditStep, onBack, onFinalize, finalizing, 
           type="button"
           onClick={onFinalize}
           disabled={finalizing}
-          className="flex-1 rounded-full bg-brand-blue py-2.5 text-center font-display font-bold text-brand-white disabled:opacity-50"
+          className="lils-button-primary flex-1 py-3 text-sm"
         >
           {finalizing ? 'Procesando…' : 'Finalizar pedido'}
         </button>
