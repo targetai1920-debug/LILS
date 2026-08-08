@@ -1,1 +1,2 @@
 GitHub Pages deployment is managed by .github/workflows/deploy-pages.yml.
+Deployment triggered after setting main as the default branch on 2026-08-08.
