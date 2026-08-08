@@ -37,7 +37,7 @@ describe('ProductModal', () => {
     await user.click(screen.getByRole('radio', { name: /triple/i }));
     await user.click(screen.getByRole('checkbox', { name: /tocino extra/i }));
     await user.click(screen.getByRole('button', { name: /aumentar cantidad/i }));
-    await user.click(screen.getByRole('button', { name: /agregar al pedido/i }));
+    await user.click(screen.getByRole('button', { name: /agregar y continuar/i }));
 
     const probe = screen.getByTestId('cart-probe');
     const item = within(probe).getByText(/lils-burger x2 variant:triple extras:1/i);

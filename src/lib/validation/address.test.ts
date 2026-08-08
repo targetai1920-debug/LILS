@@ -40,10 +40,10 @@ describe('validateDeliveryAddress', () => {
     expect(flaggedNoNumber.valid).toBe(true);
   });
 
-  it('exige la calle auxiliar', () => {
+  it('la calle auxiliar es opcional', () => {
     const result = validateDeliveryAddress(makeAddress({ crossStreet: '' }));
-    expect(result.valid).toBe(false);
-    expect(result.errors.crossStreet).toBeTruthy();
+    expect(result.valid).toBe(true);
+    expect(result.errors.crossStreet).toBeUndefined();
   });
 
   it('exige marcar la ubicación en el mapa', () => {

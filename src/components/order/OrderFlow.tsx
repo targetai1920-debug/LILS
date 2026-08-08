@@ -117,13 +117,17 @@ export function OrderFlow() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8">
-      <h1 className="font-display text-3xl font-extrabold text-brand-black">Ordenar</h1>
+    <div className="mx-auto max-w-6xl px-4 py-8 md:py-12">
+      <header className="blueprint-pattern rounded-[2.5rem] px-6 py-8 text-brand-white shadow-[0_20px_50px_rgba(23,37,119,0.18)] md:px-9">
+        <span className="lils-kicker border-brand-white/20 bg-brand-white/10 text-brand-white">Pedido LILS</span>
+        <h1 className="font-display mt-3 text-4xl font-black tracking-[-0.04em] md:text-5xl">Ordenar</h1>
+        <p className="mt-2 max-w-xl text-sm text-brand-white/70">Elige, personaliza y revisa todo paso a paso.</p>
+      </header>
       <div className="mt-4 overflow-x-auto pb-2">
         <Stepper currentStepIndex={state.stepIndex} />
       </div>
 
-      <div className="mt-6 rounded-brand border-2 border-brand-black/10 bg-brand-white p-5 md:p-6">
+      <div className={`mt-6 ${currentStep === 'cart' ? '' : 'lils-surface mx-auto max-w-3xl p-5 md:p-7'}`}>
         {currentStep === 'cart' ? <CartStep onContinue={() => act({ type: 'NEXT_STEP' })} /> : null}
 
         {currentStep === 'fulfillment' ? (

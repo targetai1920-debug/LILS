@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <CartProvider>
           <DemoModeBanner />
           <Nav />
-          <main id="main-content" className="flex-1 pb-20 md:pb-0">
+          <main id="main-content" className="relative flex-1 pb-24 md:pb-0">
             {children}
           </main>
           <Footer />

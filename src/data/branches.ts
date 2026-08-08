@@ -16,7 +16,7 @@ export const branches: Branch[] = [
     id: 'melchor-urquidi',
     name: 'Sucursal Melchor Urquidi',
     addressLine: 'Av. Melchor Urquidi entre J. A. Rico Toro y Pasaje Vega, Cochabamba',
-    reference: 'Cerca del Parque Fidel Anze, al lado de Bolivisión',
+    reference: 'A una cuadra y media del Parque Fidel Anze, al lado de Bolivisión',
     coordinates: { lat: -17.3856, lng: -66.1568 },
     coordinatesApproximate: true,
     openTime: '17:00',

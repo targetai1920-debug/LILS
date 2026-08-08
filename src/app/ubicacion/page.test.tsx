@@ -21,16 +21,14 @@ describe('UbicacionPage: sin marcadores técnicos visibles', () => {
     }
   });
 
-  it('muestra un aviso entendible sobre el mapa referencial', () => {
+  it('muestra la referencia pública confirmada', () => {
     render(<UbicacionPage />);
-    expect(
-      screen.getByText(/Mapa referencial de la demostración\. La ubicación exacta se confirmará con LILS/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/A una cuadra y media del Parque Fidel Anze/)).toBeInTheDocument();
   });
 
   it('el botón "Cómo llegar" busca la dirección pública, no una coordenada afirmada como exacta', () => {
     render(<UbicacionPage />);
-    const link = screen.getByRole('link', { name: 'Cómo llegar' });
+    const link = screen.getByRole('link', { name: /Abrir ruta en Google Maps/ });
     const href = link.getAttribute('href') ?? '';
     expect(href).toContain('maps/search');
     expect(href).not.toContain('maps/dir');

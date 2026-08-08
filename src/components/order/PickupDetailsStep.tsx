@@ -22,15 +22,14 @@ export function PickupDetailsStep({ pickup, onPatch, onBack, onContinue }: Picku
   const todayStr = useMemo(() => getCochabambaNow().dateStr, []);
 
   const availableSlots = useMemo(() => {
-    if (!pickup.date) return [];
     return generatePickupSlots({
-      dateStr: pickup.date,
+      dateStr: todayStr,
       openTime: branch.openTime,
       closeTime: branch.closeTime,
       intervalMinutes: deliveryConfig.pickupSlotIntervalMinutes,
       preparationMinutes: deliveryConfig.preparationMinutesEstimate,
     });
-  }, [pickup.date, branch]);
+  }, [todayStr, branch]);
 
   function handleContinue() {
     const result = validatePickupDetails(pickup, branch, deliveryConfig);
@@ -45,6 +44,14 @@ export function PickupDetailsStep({ pickup, onPatch, onBack, onContinue }: Picku
   return (
     <div>
       <h2 className="font-display text-lg font-bold text-brand-black">Recojo en sucursal</h2>
+
+      <div className="mt-4 flex items-start gap-3 rounded-[1.5rem] border border-brand-blue/15 bg-brand-blue/5 p-4">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-blue font-display font-black text-brand-white" aria-hidden="true">~</span>
+        <div>
+          <p className="font-display font-black text-brand-blue">Tiempo estimado: {deliveryConfig.preparationMinutesEstimate} minutos</p>
+          <p className="mt-0.5 text-sm text-brand-black/60">Elige una hora disponible de hoy. Te avisaremos si el tiempo cambia.</p>
+        </div>
+      </div>
 
       <div className="mt-4 flex flex-col gap-4">
         {branches.length > 1 ? (
@@ -94,33 +101,17 @@ export function PickupDetailsStep({ pickup, onPatch, onBack, onContinue }: Picku
         </div>
 
         <div>
-          <label htmlFor="pickupDate" className="text-sm font-bold text-brand-black">
-            Fecha de recojo <span aria-hidden="true">*</span>
-          </label>
-          <input
-            id="pickupDate"
-            type="date"
-            min={todayStr}
-            value={pickup.date}
-            onChange={(event) => onPatch({ date: event.target.value, time: '' })}
-            aria-required="true"
-            className="mt-1 w-full rounded-xl border-2 border-brand-black/15 p-2.5"
-          />
-        </div>
-
-        <div>
           <label htmlFor="pickupTime" className="text-sm font-bold text-brand-black">
-            Hora de recojo <span aria-hidden="true">*</span>
+            ¿A qué hora pasas hoy? <span aria-hidden="true">*</span>
           </label>
           <select
             id="pickupTime"
             value={pickup.time}
-            onChange={(event) => onPatch({ time: event.target.value })}
-            disabled={!pickup.date}
+            onChange={(event) => onPatch({ date: todayStr, time: event.target.value })}
             aria-required="true"
             aria-invalid={Boolean(errors.time)}
             aria-describedby={errors.time ? 'pickupTime-error' : undefined}
-            className="mt-1 w-full rounded-xl border-2 border-brand-black/15 p-2.5 disabled:bg-brand-beige"
+            className="mt-1 w-full rounded-xl border-2 border-brand-black/15 p-2.5"
           >
             <option value="">Elige una hora</option>
             {availableSlots.map((slot) => (
@@ -129,10 +120,9 @@ export function PickupDetailsStep({ pickup, onPatch, onBack, onContinue }: Picku
               </option>
             ))}
           </select>
-          {pickup.date && availableSlots.length === 0 ? (
+          {availableSlots.length === 0 ? (
             <p className="mt-1 text-xs text-brand-black/60">
-              No hay horarios disponibles para esta fecha (fuera del horario {branch.openTime}–
-              {branch.closeTime}). Elige otra fecha.
+              Ya no quedan horarios de recojo para hoy. Nuestro horario es {branch.openTime}–{branch.closeTime}.
             </p>
           ) : null}
           {errors.time ? (
@@ -140,7 +130,7 @@ export function PickupDetailsStep({ pickup, onPatch, onBack, onContinue }: Picku
               {errors.time}
             </p>
           ) : null}
-          <p className="mt-1 text-xs text-brand-black/60">{preparationTimeDisclaimer}</p>
+          <p className="mt-1 text-xs text-brand-black/55">{preparationTimeDisclaimer}</p>
         </div>
       </div>
 
@@ -148,14 +138,14 @@ export function PickupDetailsStep({ pickup, onPatch, onBack, onContinue }: Picku
         <button
           type="button"
           onClick={onBack}
-          className="rounded-full border-2 border-brand-blue px-5 py-2.5 text-sm font-bold text-brand-blue"
+          className="lils-button-secondary text-sm"
         >
           Volver
         </button>
         <button
           type="button"
           onClick={handleContinue}
-          className="flex-1 rounded-full bg-brand-blue py-2.5 text-center font-display font-bold text-brand-white"
+          className="lils-button-primary flex-1 py-3 text-sm"
         >
           Continuar
         </button>

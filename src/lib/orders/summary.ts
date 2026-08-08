@@ -75,7 +75,7 @@ export function buildOrderSummary(
   const destination =
     draft.fulfillmentType === 'delivery'
       ? [draft.address?.mainStreet, draft.address?.houseNumber].filter(Boolean).join(' ')
-      : branch?.name ?? '';
+      : `${branch?.name ?? ''}${draft.pickup?.time ? ` · ${draft.pickup.time}` : ''}`;
 
   const billingLabel =
     draft.billing.type === 'con-nit'

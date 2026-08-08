@@ -157,14 +157,13 @@ export function DeliveryDetailsStep({
 
         <div>
           <label htmlFor="crossStreet" className="text-sm font-bold text-brand-black">
-            Calle auxiliar <span aria-hidden="true">*</span>
+            Calle auxiliar (opcional)
           </label>
           <input
             id="crossStreet"
             type="text"
             value={address.crossStreet}
             onChange={(event) => onPatch({ crossStreet: event.target.value })}
-            aria-required="true"
             aria-invalid={Boolean(errors.crossStreet)}
             aria-describedby={errors.crossStreet ? 'crossStreet-error' : undefined}
             className="mt-1 w-full rounded-xl border-2 border-brand-black/15 p-2.5"
@@ -185,7 +184,7 @@ export function DeliveryDetailsStep({
               type="button"
               onClick={handleUseMyLocation}
               disabled={locating}
-              className="rounded-full border-2 border-brand-blue px-3 py-1 text-xs font-bold text-brand-blue disabled:opacity-50"
+              className="lils-button-quiet"
             >
               {locating ? 'Ubicando…' : 'Usar mi ubicación'}
             </button>
@@ -260,14 +259,14 @@ export function DeliveryDetailsStep({
         <button
           type="button"
           onClick={onBack}
-          className="rounded-full border-2 border-brand-blue px-5 py-2.5 text-sm font-bold text-brand-blue"
+          className="lils-button-secondary text-sm"
         >
           Volver
         </button>
         <button
           type="button"
           onClick={handleContinue}
-          className="flex-1 rounded-full bg-brand-blue py-2.5 text-center font-display font-bold text-brand-white"
+          className="lils-button-primary flex-1 py-3 text-sm"
         >
           Continuar
         </button>

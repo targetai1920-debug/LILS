@@ -10,12 +10,12 @@ export const metadata: Metadata = {
 
 export default function UbicacionPage() {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10">
-      <h1 className="font-display text-3xl font-extrabold text-brand-black md:text-4xl">Ubicación</h1>
-      <p className="mt-2 text-brand-black/70">
-        Por ahora contamos con una sucursal confirmada. La estructura del sitio admite más
-        sucursales cuando LILS las confirme.
-      </p>
+    <div className="mx-auto max-w-5xl px-4 py-8 md:py-12">
+      <header className="blueprint-pattern rounded-[2.5rem] px-6 py-9 text-brand-white shadow-[0_22px_55px_rgba(23,37,119,0.20)] md:px-10">
+        <span className="lils-kicker border-brand-white/20 bg-brand-white/10 text-brand-white">Cómo llegar</span>
+        <h1 className="font-display mt-3 text-5xl font-black tracking-[-0.04em] md:text-6xl">Encuéntranos.</h1>
+        <p className="mt-2 max-w-2xl text-brand-white/70">Abre el mapa, sigue la ruta y ven por tu pedido.</p>
+      </header>
 
       <div className="mt-8 flex flex-col gap-8">
         {branches.map((branch) => {
@@ -29,19 +29,13 @@ export default function UbicacionPage() {
           return (
             <article
               key={branch.id}
-              className="overflow-hidden rounded-brand border-2 border-brand-black/10 bg-brand-white"
+              className="lils-surface overflow-hidden"
             >
-              <div className="h-72 w-full">
+              <div className="h-80 w-full overflow-hidden rounded-b-[2rem] bg-brand-beige md:h-[28rem]">
                 <BranchMapLoader branch={branch} />
               </div>
-              {branch.coordinatesApproximate ? (
-                <p className="bg-brand-beige px-4 py-2 text-center text-xs text-brand-black/70">
-                  Mapa referencial de la demostración. La ubicación exacta se confirmará con LILS
-                  antes de habilitar pedidos.
-                </p>
-              ) : null}
               <div className="p-6">
-                <h2 className="font-display text-xl font-extrabold text-brand-black">{branch.name}</h2>
+                <h2 className="font-display text-2xl font-black text-brand-black">{branch.name}</h2>
                 <dl className="mt-3 space-y-2 text-sm text-brand-black/80">
                   <div>
                     <dt className="font-semibold text-brand-black">Dirección</dt>
@@ -63,9 +57,9 @@ export default function UbicacionPage() {
                   href={directionsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 inline-block rounded-full bg-brand-blue px-5 py-2.5 text-sm font-bold text-brand-white"
+                  className="lils-button-primary mt-5 text-sm"
                 >
-                  Cómo llegar
+                  Abrir ruta en Google Maps <span aria-hidden="true">↗</span>
                 </a>
               </div>
             </article>

@@ -26,10 +26,6 @@ export function validateDeliveryAddress(address: DeliveryAddress): AddressValida
       'Ingresa el número de domicilio o marca "Mi domicilio no tiene número".';
   }
 
-  if (!address.crossStreet.trim()) {
-    errors.crossStreet = 'La calle auxiliar es obligatoria.';
-  }
-
   if (!address.location) {
     errors.location = 'Marca la ubicación exacta en el mapa.';
   }

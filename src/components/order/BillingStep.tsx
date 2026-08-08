@@ -34,8 +34,8 @@ export function BillingStep({ billing, onChange, onBack, onContinue }: BillingSt
           {(['con-nit', 'sin-nit'] as const).map((type) => (
             <label
               key={type}
-              className={`cursor-pointer rounded-2xl border-2 p-4 text-center font-display font-bold ${
-                billing.type === type ? 'border-brand-blue bg-brand-beige' : 'border-brand-black/15'
+              className={`hover-bop cursor-pointer rounded-[1.5rem] border-2 p-5 text-center font-display font-bold ${
+                billing.type === type ? 'border-brand-blue bg-brand-blue/5 shadow-md' : 'border-brand-black/10 bg-brand-white'
               }`}
             >
               <input
@@ -102,14 +102,14 @@ export function BillingStep({ billing, onChange, onBack, onContinue }: BillingSt
         <button
           type="button"
           onClick={onBack}
-          className="rounded-full border-2 border-brand-blue px-5 py-2.5 text-sm font-bold text-brand-blue"
+          className="lils-button-secondary text-sm"
         >
           Volver
         </button>
         <button
           type="button"
           onClick={handleContinue}
-          className="flex-1 rounded-full bg-brand-blue py-2.5 text-center font-display font-bold text-brand-white"
+          className="lils-button-primary flex-1 py-3 text-sm"
         >
           Continuar
         </button>
