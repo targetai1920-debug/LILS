@@ -44,12 +44,12 @@ describe('calculateLineUnitPriceBs', () => {
     expect(calculateLineUnitPriceBs(lilsBurger, line)).toBe(45);
   });
 
-  it('descuenta el precio de "sin papas" solo si el producto lo permite', () => {
+  it('descuenta Bs 3 al pedir una hamburguesa sin papas', () => {
     const kidsLine = makeLine({ productId: lilsKids.id, variantId: 'unico', noFries: true });
     expect(calculateLineUnitPriceBs(lilsKids, kidsLine)).toBe(42 - 3);
 
     const burgerLine = makeLine({ noFries: true });
-    expect(calculateLineUnitPriceBs(lilsBurger, burgerLine)).toBe(45);
+    expect(calculateLineUnitPriceBs(lilsBurger, burgerLine)).toBe(45 - 3);
   });
 
   it('nunca resulta en un precio negativo', () => {

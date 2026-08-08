@@ -25,6 +25,8 @@ export interface Product {
   name: string;
   description: string;
   imagePlaceholderId: string;
+  /** Ruta pública de una fotografía limpia del producto, si está disponible. */
+  imagePath?: string;
   ingredients: IngredientRef[];
   variants: ProductVariant[];
   extraIds: string[];

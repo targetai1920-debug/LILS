@@ -3,12 +3,12 @@
 import { useId, useMemo, useState } from 'react';
 import type { CartLine, Product } from '@/types';
 import { Modal } from '@/components/ui/Modal';
-import { BurgerPlaceholder } from '@/components/brand/BurgerPlaceholder';
-import { getExtraById } from '@/data/menu';
+import { getExtraById, noFriesDiscountBs } from '@/data/menu';
 import { calculateLineUnitPriceBs } from '@/lib/cart/pricing';
 import { clampQuantity, MAX_QUANTITY, MIN_QUANTITY } from '@/lib/cart/reducer';
 import { formatBs } from '@/lib/format';
 import { useCart } from '@/context/CartContext';
+import { ProductVisual } from './ProductVisual';
 
 interface ProductModalProps {
   product: Product;
@@ -99,7 +99,11 @@ export function ProductModal({ product, onClose, initialLine, onSaved }: Product
         </button>
       </div>
 
-      <BurgerPlaceholder className="mt-3 aspect-[16/9] w-full rounded-2xl" label={product.name} />
+      <ProductVisual
+        product={product}
+        className="mt-3 aspect-[16/9] w-full rounded-2xl"
+        sizes="(min-width: 640px) 36rem, 100vw"
+      />
 
       <p className="mt-3 text-sm text-brand-black/70">{product.description}</p>
 
@@ -196,7 +200,7 @@ export function ProductModal({ product, onClose, initialLine, onSaved }: Product
 
       {product.allowsNoFries ? (
         <label className="mt-4 flex items-center justify-between rounded-xl border-2 border-brand-black/10 px-3 py-2 text-sm">
-          <span>Sin papas</span>
+          <span>Sin papas (−{formatBs(noFriesDiscountBs)})</span>
           <input
             type="checkbox"
             checked={noFries}

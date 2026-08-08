@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "build:pages": "NEXT_PUBLIC_BASE_PATH=/LILS next build && touch out/.nojekyll",
+    "build": "node scripts/clean-output.mjs && next build",
+    "build:pages": "node scripts/clean-output.mjs && NEXT_PUBLIC_BASE_PATH=/LILS next build && touch out/.nojekyll",
     "verify:pages": "node scripts/verify-base-path.mjs",
     "start": "next start",
     "lint": "eslint .",

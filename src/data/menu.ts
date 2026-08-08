@@ -87,7 +87,7 @@ export const products: Product[] = [
       { id: 'triple', label: 'Triple', priceBs: 49 },
     ],
     extraIds: commonBurgerExtraIds,
-    allowsNoFries: false,
+    allowsNoFries: true,
     featured: true,
   },
   {
@@ -109,7 +109,7 @@ export const products: Product[] = [
       { id: 'triple', label: 'Triple', priceBs: 49 },
     ],
     extraIds: commonBurgerExtraIds,
-    allowsNoFries: false,
+    allowsNoFries: true,
     featured: true,
   },
   {
@@ -131,7 +131,7 @@ export const products: Product[] = [
       { id: 'triple', label: 'Triple', priceBs: 45 },
     ],
     extraIds: commonBurgerExtraIds,
-    allowsNoFries: false,
+    allowsNoFries: true,
     featured: false,
   },
   {
@@ -141,6 +141,7 @@ export const products: Product[] = [
     name: 'Hawaiana',
     description: 'Smash y cheddar con piña caramelizada en cubitos y salsa LILS.',
     imagePlaceholderId: 'burger-hawaiana',
+    imagePath: '/products/hawaiana.webp',
     ingredients: [
       { id: 'pan-brioche', label: 'Pan brioche', removable: false },
       { id: 'carnes-smash', label: 'Carnes smash', removable: false },
@@ -153,7 +154,7 @@ export const products: Product[] = [
       { id: 'triple', label: 'Triple', priceBs: 49 },
     ],
     extraIds: commonBurgerExtraIds,
-    allowsNoFries: false,
+    allowsNoFries: true,
     featured: true,
   },
   {
@@ -163,6 +164,7 @@ export const products: Product[] = [
     name: 'Sweet Bacon',
     description: 'Smash y cheddar con mermelada de tocino y salsa LILS.',
     imagePlaceholderId: 'burger-sweet-bacon',
+    imagePath: '/products/sweet-bacon.webp',
     ingredients: [
       { id: 'pan-brioche', label: 'Pan brioche', removable: false },
       { id: 'carnes-smash', label: 'Carnes smash', removable: false },
@@ -175,7 +177,7 @@ export const products: Product[] = [
       { id: 'triple', label: 'Triple', priceBs: 55 },
     ],
     extraIds: commonBurgerExtraIds,
-    allowsNoFries: false,
+    allowsNoFries: true,
     featured: true,
   },
   {
@@ -197,7 +199,7 @@ export const products: Product[] = [
       { id: 'triple', label: 'Triple', priceBs: 49 },
     ],
     extraIds: commonBurgerExtraIds,
-    allowsNoFries: false,
+    allowsNoFries: true,
     featured: false,
   },
   {

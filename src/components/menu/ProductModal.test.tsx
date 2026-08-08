@@ -55,4 +55,13 @@ describe('ProductModal', () => {
 
     expect(screen.getByText(/^Bs 45$/)).toBeInTheDocument();
   });
+
+  it('muestra y aplica el descuento por pedir la hamburguesa sin papas', async () => {
+    const user = userEvent.setup();
+    renderModal();
+
+    await user.click(screen.getByRole('checkbox', { name: /sin papas/i }));
+
+    expect(screen.getByText(/^Bs 42$/)).toBeInTheDocument();
+  });
 });

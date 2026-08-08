@@ -4,8 +4,7 @@
  * NEXT_PUBLIC_BASE_PATH=/LILS (`npm run build:pages`) generó referencias
  * internas bajo "/LILS/_next/" y no bajo "/_next/", y que "out/.nojekyll"
  * existe. No publica ni sube nada: solo valida el contenido local de
- * `out/`, pensado para una futura publicación en GitHub Pages que sigue
- * deshabilitada.
+ * `out/`, listo para el workflow autorizado de GitHub Pages.
  *
  * Uso:
  *   npm run build:pages
@@ -30,6 +29,10 @@ function findHtmlFiles(dir) {
 const OUT_DIR = 'out';
 const EXPECTED_PREFIX = '/LILS/_next/';
 const FORBIDDEN_PREFIX = '"/_next/';
+const EXPECTED_PRODUCT_ASSETS = [
+  'products/hawaiana.webp',
+  'products/sweet-bacon.webp',
+];
 
 function fail(message) {
   console.error(`✖ ${message}`);
@@ -76,8 +79,17 @@ if (checkedAny && process.exitCode !== 1) {
   pass(`Todas las páginas HTML (${htmlFiles.length}) referencian "${EXPECTED_PREFIX}" y no "/_next/" sin prefijo.`);
 }
 
+for (const relativePath of EXPECTED_PRODUCT_ASSETS) {
+  const assetPath = join(OUT_DIR, relativePath);
+  if (existsSync(assetPath)) {
+    pass(`${relativePath} está incluido en el export público.`);
+  } else {
+    fail(`Falta ${relativePath} en el export público.`);
+  }
+}
+
 if (process.exitCode === 1) {
   console.error('\nLa verificación del build /LILS falló. Ver detalles arriba.');
 } else {
-  console.log('\nBuild /LILS verificado correctamente. Nada fue publicado.');
+  console.log('\nBuild /LILS verificado correctamente.');
 }

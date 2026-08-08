@@ -5,10 +5,8 @@
  * se construye para servirse en la raíz "/", que es el comportamiento
  * normal de `npm run dev` y de `npm run build`.
  *
- * Esto NO habilita ni publica nada por sí mismo: solo prepara las rutas y
- * los assets para una futura publicación en GitHub Pages, que sigue
- * deshabilitada hasta que exista un workflow de despliegue separado y
- * autorización explícita.
+ * Esto no publica nada por sí mismo: solo prepara las rutas y los assets.
+ * La publicación autorizada vive en `.github/workflows/deploy-pages.yml`.
  */
 const rawBasePath = process.env.NEXT_PUBLIC_BASE_PATH?.trim() ?? '';
 

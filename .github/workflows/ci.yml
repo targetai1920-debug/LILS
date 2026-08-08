@@ -2,9 +2,8 @@ name: CI
 
 # Validación únicamente. Este workflow nunca debe construir un paso de
 # despliegue (deploy-pages, permisos pages:write/id-token:write, ni un
-# entorno github-pages): solo comprueba que el código está sano. Publicar
-# la demo requiere un workflow separado y una autorización explícita
-# posterior — ver docs/DEMO_LIMITATIONS.md.
+# entorno github-pages): solo comprueba que el código está sano. La
+# publicación autorizada vive separada en deploy-pages.yml.
 
 on:
   push:

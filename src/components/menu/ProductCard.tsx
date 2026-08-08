@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import type { Product } from '@/types';
-import { BurgerPlaceholder } from '@/components/brand/BurgerPlaceholder';
 import { formatBs } from '@/lib/format';
 import { ProductModal } from './ProductModal';
+import { ProductVisual } from './ProductVisual';
 
 interface ProductCardProps {
   product: Product;
@@ -17,7 +17,11 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <div className="flex flex-col overflow-hidden rounded-brand border-2 border-brand-black/10 bg-brand-white shadow-sm transition-shadow hover:shadow-md">
-      <BurgerPlaceholder className="aspect-[4/3] w-full" label={product.name} />
+      <ProductVisual
+        product={product}
+        className="aspect-[4/3] w-full"
+        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+      />
       <div className="flex flex-1 flex-col gap-2 p-4">
         <h3 className="font-display text-lg font-extrabold text-brand-black">{product.name}</h3>
         {ingredientSummary ? (
