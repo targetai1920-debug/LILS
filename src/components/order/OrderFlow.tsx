@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useReducer, useRef, useState } from 'react';
+import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import type { OrderDraft } from '@/types';
 import { useCart } from '@/context/CartContext';
 import {
@@ -15,6 +15,7 @@ import { resolveAttemptIdentity, type AttemptIdentity } from '@/lib/orders/attem
 import { validateOrderDraftForFinalization } from '@/lib/orders/draftValidation';
 import { getProductById } from '@/data/menu';
 import { calculateCartSubtotalBs } from '@/lib/cart/pricing';
+import { CART_SUMMARY_ID, VIEW_CART_EVENT } from '@/lib/cart/navigation';
 import { Stepper } from './Stepper';
 import { CartStep } from './CartStep';
 import { FulfillmentStep } from './FulfillmentStep';
@@ -24,6 +25,14 @@ import { BillingStep } from './BillingStep';
 import { PaymentStep } from './PaymentStep';
 import { ReviewStep } from './ReviewStep';
 import { ReceiptStep } from './ReceiptStep';
+
+function scrollToOrderSection(id: string) {
+  const target = document.getElementById(id);
+  if (target && typeof target.scrollIntoView === 'function') {
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  }
+}
 
 export function OrderFlow() {
   const { lines, clearCart } = useCart();
@@ -43,6 +52,8 @@ export function OrderFlow() {
   // colar una segunda llamada al servicio. El botón deshabilitado por
   // `finalizing` es la protección visual; esta es la protección real.
   const submittingRef = useRef(false);
+  const previousStepIndexRef = useRef(state.stepIndex);
+  const scrollToCartSummaryRef = useRef(false);
 
   const steps = getStepList();
   const currentStep = steps[state.stepIndex];
@@ -62,6 +73,36 @@ export function OrderFlow() {
     }),
     [state, lines],
   );
+
+  useEffect(() => {
+    if (previousStepIndexRef.current === state.stepIndex) return;
+
+    previousStepIndexRef.current = state.stepIndex;
+    const targetId = scrollToCartSummaryRef.current ? CART_SUMMARY_ID : 'paso-pedido-actual';
+    scrollToCartSummaryRef.current = false;
+    scrollToOrderSection(targetId);
+  }, [state.stepIndex]);
+
+  useEffect(() => {
+    function showCartSummary() {
+      if (state.stepIndex === 0) {
+        scrollToOrderSection(CART_SUMMARY_ID);
+        return;
+      }
+
+      scrollToCartSummaryRef.current = true;
+      dispatch({ type: 'GO_TO_STEP', stepIndex: 0 });
+    }
+
+    window.addEventListener(VIEW_CART_EVENT, showCartSummary);
+    return () => window.removeEventListener(VIEW_CART_EVENT, showCartSummary);
+  }, [state.stepIndex]);
+
+  useEffect(() => {
+    if (window.location.hash === `#${CART_SUMMARY_ID}`) {
+      scrollToOrderSection(CART_SUMMARY_ID);
+    }
+  }, []);
 
   /** Despacha una acción y limpia cualquier mensaje de validación pendiente. */
   function act(action: CheckoutAction) {
@@ -127,7 +168,10 @@ export function OrderFlow() {
         <Stepper currentStepIndex={state.stepIndex} />
       </div>
 
-      <div className={`mt-6 ${currentStep === 'cart' ? '' : 'lils-surface mx-auto max-w-3xl p-5 md:p-7'}`}>
+      <div
+        id="paso-pedido-actual"
+        className={`mt-6 scroll-mt-28 ${currentStep === 'cart' ? '' : 'lils-surface mx-auto max-w-3xl p-5 md:p-7'}`}
+      >
         {currentStep === 'cart' ? <CartStep onContinue={() => act({ type: 'NEXT_STEP' })} /> : null}
 
         {currentStep === 'fulfillment' ? (

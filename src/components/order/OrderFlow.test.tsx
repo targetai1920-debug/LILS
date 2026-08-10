@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { CartProvider } from '@/context/CartContext';
 import { CART_STORAGE_KEY_NAME } from '@/lib/cart/storage';
 import { demoOrderService } from '@/lib/orders/DemoOrderService';
+import { VIEW_CART_EVENT } from '@/lib/cart/navigation';
 import { OrderFlow } from './OrderFlow';
 
 function seedCart() {
@@ -91,5 +92,61 @@ describe('OrderFlow: protección de doble clic en Finalizar pedido', () => {
 
     expect(submitSpy).toHaveBeenCalledTimes(1);
     submitSpy.mockRestore();
+  });
+});
+
+describe('OrderFlow: navegación móvil entre carrito y entrega', () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+    seedCart();
+    Object.defineProperty(window, 'matchMedia', {
+      configurable: true,
+      value: vi.fn().mockReturnValue({ matches: false }),
+    });
+    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+      configurable: true,
+      value: vi.fn(),
+    });
+  });
+
+  it('sube al inicio de las opciones después de elegir entrega', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <CartProvider>
+        <OrderFlow />
+      </CartProvider>,
+    );
+
+    await screen.findAllByText(/LILS Burger/, {}, { timeout: 3000 });
+    await user.click(screen.getByRole('button', { name: /Elegir entrega/ }));
+
+    await screen.findByText('¿Cómo quieres recibir tu pedido?');
+    expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledWith({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  });
+
+  it('el botón móvil vuelve al resumen aunque el pedido esté en otro paso', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <CartProvider>
+        <OrderFlow />
+      </CartProvider>,
+    );
+
+    await screen.findAllByText(/LILS Burger/, {}, { timeout: 3000 });
+    await user.click(screen.getByRole('button', { name: /Elegir entrega/ }));
+    await screen.findByText('¿Cómo quieres recibir tu pedido?');
+
+    window.dispatchEvent(new Event(VIEW_CART_EVENT));
+
+    await screen.findByRole('heading', { name: 'Resumen del pedido' });
+    expect(HTMLElement.prototype.scrollIntoView).toHaveBeenLastCalledWith({
+      behavior: 'smooth',
+      block: 'start',
+    });
   });
 });
