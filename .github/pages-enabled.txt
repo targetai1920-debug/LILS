@@ -2,3 +2,4 @@ GitHub Pages deployment is managed by .github/workflows/deploy-pages.yml.
 Deployment triggered after setting main as the default branch on 2026-08-08.
 Deployment retriggered after GitHub Pages was enabled with GitHub Actions on 2026-08-08.
 Redesign deployment triggered on 2026-08-08.
+Mobile selector and cart accessibility fix deployed on 2026-08-10 (751571c).
