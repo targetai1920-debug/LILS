@@ -19,13 +19,18 @@ export function Hero() {
               <span className="lils-kicker border-brand-white/20 bg-brand-white/10 text-brand-white">
                 <span className="h-2 w-2 animate-pulse rounded-full bg-brand-white" /> Cochabamba
               </span>
-              <h1 className="font-display mt-5 max-w-2xl text-5xl font-black leading-[0.94] tracking-[-0.04em] text-brand-white sm:text-6xl lg:text-7xl">
-                Smash que se nota.
+              <h1 className="font-display mt-5 max-w-2xl text-5xl font-black uppercase leading-[0.9] tracking-[-0.04em] text-brand-white sm:text-6xl lg:text-7xl">
+                Good food,
+                <span className="block">good people</span>
               </h1>
-              <p className="mt-5 max-w-xl text-base font-medium leading-relaxed text-brand-white/80 sm:text-lg">
-                Pan brioche, carnes smash y combinaciones bien LILS. Arma tu pedido a tu manera y
-                elige delivery o recojo.
-              </p>
+              <div className="mt-6 max-w-xl rotate-[-0.5deg] rounded-[1.75rem] border-2 border-brand-white/70 bg-brand-cream px-5 py-4 shadow-[0_9px_0_rgba(12,16,19,0.2),0_18px_35px_rgba(12,16,19,0.16)] sm:px-6 sm:py-5">
+                <p className="font-display text-base font-extrabold leading-snug text-brand-black sm:text-lg">
+                  Pan brioche, carnes smash y combinaciones bien LILS.
+                  <span className="mt-1 block text-brand-blue-dark">
+                    Arma tu pedido a tu manera y elige delivery o recojo.
+                  </span>
+                </p>
+              </div>
 
               <div className="mt-7 flex flex-wrap gap-3">
                 <Link href="/ordenar" className="lils-button-secondary px-6 py-3.5">
