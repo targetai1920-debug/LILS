@@ -2,6 +2,7 @@ import { Hero } from '@/components/home/Hero';
 import { FeaturedProducts } from '@/components/menu/FeaturedProducts';
 import { aboutUsText } from '@/data/business';
 import { business } from '@/data/business';
+import { Mascot } from '@/components/brand/Mascot';
 import Link from 'next/link';
 
 export default function HomePage() {
@@ -22,7 +23,7 @@ export default function HomePage() {
               Conocer LILS <span aria-hidden="true">→</span>
             </Link>
           </div>
-          <div aria-hidden="true" className="checker-pattern h-32 w-full rounded-[2rem] opacity-90 md:h-44 md:w-44" />
+          <Mascot className="mx-auto h-36 w-36 shrink-0 rotate-3 drop-shadow-xl transition duration-300 hover:-rotate-3 hover:scale-105 md:h-44 md:w-44" />
         </div>
       </section>
 
