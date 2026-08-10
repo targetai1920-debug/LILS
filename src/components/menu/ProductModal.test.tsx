@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CartProvider, useCart } from '@/context/CartContext';
@@ -63,5 +63,19 @@ describe('ProductModal', () => {
     await user.click(screen.getByRole('checkbox', { name: /sin papas/i }));
 
     expect(screen.getByText(/^Bs 42$/)).toBeInTheDocument();
+  });
+
+  it('mantiene un cierre claramente accesible para salir de la selección', async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+
+    render(
+      <CartProvider>
+        <ProductModal product={lilsBurger} onClose={onClose} />
+      </CartProvider>,
+    );
+
+    await user.click(screen.getByRole('button', { name: /cerrar selección/i }));
+    expect(onClose).toHaveBeenCalledOnce();
   });
 });
